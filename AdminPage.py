@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import Button
 from tkinter import ttk
-from Center import CenterPage
+from HelperPage.Center import CenterPage
 from AdminAddPeople import AddPeople
 from AdminAddHospital import AddHospital
 from AdminAddDoctor import AddDoctor
+from AdminAddPharmacyShop import AddPharmacyShop
+from AdminAddPharmacist import AddPharmacist
 
 class AdminPage:
 
@@ -33,6 +35,16 @@ class AdminPage:
                command=self.AddDoctorPage
                ).place(x=440, y=y + 70)
 
+        Button(self.root, text="Add Pharmacy", bg="#4B4B4B", fg="#FFFDFC", bd="0", padx='20', pady="3",
+               activebackground="#2D2C2C", activeforeground="#FFFDFC",
+               command=self.AddPharmacyShop
+               ).place(x=40, y=y + 140)
+
+        Button(self.root, text="Add Pharmacist", bg="#4B4B4B", fg="#FFFDFC", bd="0", padx='20', pady="3",
+               activebackground="#2D2C2C", activeforeground="#FFFDFC",
+               command=self.AddPharmacist
+               ).place(x=240, y=y + 140)
+
         CenterPage(self.root)
         self.root.mainloop()
 
@@ -50,6 +62,12 @@ class AdminPage:
 
     def AddDoctorPage(self):
         AddDoctor()
+
+    def AddPharmacyShop(self):
+        AddPharmacyShop()
+
+    def AddPharmacist(self):
+        AddPharmacist()
 
 if __name__ == '__main__':
     AdminPage()

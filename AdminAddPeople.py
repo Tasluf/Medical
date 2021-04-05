@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import Button
 from tkinter import ttk
 from tkinter import messagebox
-from Center import CenterPage
+from HelperPage.Center import CenterPage
 import sqlite3
 
 class AddPeople:

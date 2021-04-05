@@ -5,12 +5,11 @@ from tkinter import messagebox
 from HelperPage.Center import CenterPage
 import sqlite3
 
-class AddDoctor:
+class AddPharmacist:
     entry_id = None
-    entry_Password = None
+    entry_PharmacyShopID = None
     entry_PeopleID = None
-    entry_HospitalID = None
-    entry_DoctorType = None
+    entry_Password = None
 
     def __init__(self):
         y = 30
@@ -19,15 +18,14 @@ class AddDoctor:
         self.root.resizable(width=False, height=False)
         self.root.config(bg="white")
 
-        Label(self.root, text="Add Doctor", font=("Ubuntu Bold", 16), fg="#707070", bg="white").place(x=250, y=40)
+        Label(self.root, text="Add Pharmacist", font=("Ubuntu Bold", 16), fg="#707070", bg="white").place(x=250, y=40)
 
         self.textInput("ID", 50, 130, y+60, 'entry_id')
-        self.textInput("Password", 50, 130, y + 100, 'entry_Password')
-        self.textInput("DoctorType", 200, 310, y + 160, 'entry_DoctorType')
-        self.textInput("HospitalID", 330, 430, y + 100, 'entry_HospitalID')
-        self.textInput("PeopleID", 330, 430, y + 60, 'entry_PeopleID')
+        self.textInput("PharmacyShopID", 150, 300, y + 100, 'entry_PharmacyShopID')
+        self.textInput("Password", 330, 410, y + 60, 'entry_Password')
+        self.textInput("PeopleID", 150, 300, y + 140, 'entry_PeopleID')
 
-        Button(self.root, text="Add Doctor", bg="#4B4B4B", fg="#FFFDFC", bd="0", padx='20', pady="3",
+        Button(self.root, text="Add Pharmacist", bg="#4B4B4B", fg="#FFFDFC", bd="0", padx='20', pady="3",
                activebackground="#2D2C2C", activeforeground="#FFFDFC",
                command=self.show
                ).place(x=270, y=y + 380)
@@ -43,8 +41,7 @@ class AddDoctor:
     def show(self):
         id = globals()['entry_id'].get()
         Password = globals()['entry_Password'].get()
-        DoctorType = globals()['entry_DoctorType'].get()
-        HospitalID = globals()['entry_HospitalID'].get()
+        PharmacyShopID = globals()['entry_PharmacyShopID'].get()
         PeopleID = globals()['entry_PeopleID'].get()
 
         try:
@@ -52,8 +49,8 @@ class AddDoctor:
             cursor = conn.cursor()
 
             cursor.execute(f"""
-                        insert into Doctor values ({id}, "{Password}", {PeopleID},
-                        {HospitalID}, "{DoctorType}"
+                        insert into Pharmacist values ({id}, "{Password}",
+                        {PharmacyShopID}, {PeopleID}
                         )
                     """)
 
@@ -67,4 +64,4 @@ class AddDoctor:
 
 
 if __name__ == '__main__':
-    AddDoctor()
+    AddPharmacist()

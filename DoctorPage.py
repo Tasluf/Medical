@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import Button
 from tkinter import messagebox
-from Center import CenterPage
+from HelperPage.Center import CenterPage
 from PreRecord import Prerecord
 from AddRecord import Addrecord
 
@@ -10,13 +10,12 @@ import sqlite3
 
 conn = sqlite3.connect("Medical.db")
 cursor = conn.cursor()
-cursor.execute(""" select * from doctor where password='admin' """)
+cursor.execute("""Select Doctor.ID, People.Name, Doctor.HospitalID from Doctor, People where Doctor.PeopleID=People.ID;""")
 DoctorList = cursor.fetchall()
-cursor.execute(""" select * from patient where password='admin' """)
-PatientList = cursor.fetchall()
+cursor.execute(""" select ID, Password from People """)
+PeopleList = cursor.fetchall()
 conn.commit()
 conn.close()
-
 
 class Doctor:
     def __init__(self, id):
@@ -25,6 +24,7 @@ class Doctor:
 
         self.id = id
         self.name = ""
+        self.doctor = {}
         self.root = Tk()
         self.root.geometry('640x480')
         self.root.resizable(width=False, height=False)
@@ -36,11 +36,13 @@ class Doctor:
 
     def item(self):
         Label(self.root, text="Doctor Page", font=("Ubuntu Bold", 16), fg="#707070", bg="white").place(x=250, y=20)
+
         for i in DoctorList:
-            if i[0] == self.id:
+            if str(i[0]) == self.id:
                 self.name = i[1]
+                self.doctor = i
         Label(self.root, text="Name: " + self.name, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=150, y=self.y + 40)
-        Label(self.root, text="Doctor Id: " + self.id, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=150, y=self.y + 70)
+        Label(self.root, text="Doctor Id: " + str(self.id), font=("Ubuntu", 12), fg="#707070", bg="white").place(x=150, y=self.y + 70)
 
         Label(self.root, text="Patient ID", font=("Ubuntu", 12), fg="#707070", bg="white").place(x=150, y=self.y + 110)
         self.entry_id = ttk.Entry(self.root, width=30)
@@ -64,15 +66,16 @@ class Doctor:
         self.Authentication(id, password, track)
 
     def Authentication(self, id, password, track):
-        id_first = id.split("-")
-        if id_first[0] == "192":
-            for i in PatientList:
-                if i[0] == id and i[2] == password:
+        id_first = id
+        id_first = id_first[:3]
+        if id_first == "191":
+            for i in PeopleList:
+                if str(i[0]) == id and i[1] == password:
                     if track == "pre":
                         self.root.destroy()
                         Prerecord(id)
                     elif track == "add":
-                        Addrecord(id, self.id)
+                        Addrecord(id, self.doctor[0], self.doctor[2])
                     return
             else:
                 messagebox.showinfo(title='Error', message="Id or Password is incorrect")
@@ -80,4 +83,4 @@ class Doctor:
             messagebox.showinfo(title='Error', message="Id or Password is incorrect")
 
 if __name__ == '__main__':
-    Doctor("191-45042")
+    Doctor('1930002')

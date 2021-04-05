@@ -2,14 +2,17 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import Button
 from tkinter import messagebox
-from Center import CenterPage
+from HelperPage.Center import CenterPage
 import sqlite3
-from jsonFileHandeler import jsonfilehandeler
 
 conn = sqlite3.connect("Medical.db")
 cursor = conn.cursor()
-cursor.execute(""" select * from patient """)
+cursor.execute(""" select * from People """)
 PatientList = cursor.fetchall()
+cursor.execute(""" select Doctor.ID, People.Name from Doctor, People where Doctor.PeopleID = People.ID """)
+DoctorList = cursor.fetchall()
+cursor.execute(""" select * from Hospital """)
+HospitaltList = cursor.fetchall()
 conn.commit()
 conn.close()
 
@@ -19,9 +22,13 @@ class Addrecord:
     entry_Medicine = None
     entry_Note = None
 
-    def __init__(self, id, doctorId):
+    def __init__(self, id, doctorID, HospitalID):
         self.id = id
+        self.HostipalID = HospitalID
+        self.DoctorID = doctorID
         self.name = ""
+        self.doctorName = ""
+        self.hospitalName = ""
         self.root = Tk()
         self.root.geometry('640x480')
         self.root.resizable(width=False, height=False)
@@ -33,12 +40,23 @@ class Addrecord:
     def item(self):
         x = 50
         y = 5
-        Label(self.root, text="Add record", font=("Ubuntu Bold", 16), fg="#707070", bg="white").place(x=260, y=y+15)
+        Label(self.root, text="Add record", font=("Ubuntu Bold", 16), fg="#707070", bg="white").place(x=260, y=y+5)
         for i in PatientList:
-            if i[0] == self.id:
-                self.name = i[1]
+            if str(i[0]) == self.id:
+                self.name = i[5]
 
-        Label(self.root, text=self.name, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=300, y=y + 50)
+        for i in DoctorList:
+            if i[0] == self.DoctorID:
+                self.doctorName = i[1]
+
+        for i in HospitaltList:
+            if i[0] == self.HostipalID:
+                self.hospitalName = i[1]
+
+        Label(self.root, text="Patient Name: " + self.name, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=50, y=y + 40)
+        Label(self.root, text="Doctor Name: "+self.doctorName, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=400, y=y + 40)
+        Label(self.root, text="Hospital Name: "+self.hospitalName, font=("Ubuntu", 12), fg="#707070", bg="white").place(x=180, y=y + 65)
+
         Label(self.root, text="Problem title", font=("Ubuntu", 10), fg="#707070", bg="white").place(x=x, y=y + 90)
         self.entry_Problem = ttk.Entry(self.root, width=30)
         self.entry_Problem.place(x=x+5, y=y + 120)
@@ -56,19 +74,29 @@ class Addrecord:
                    ).place(x=290, y=y + 390)
 
     def add_details(self):
-        record = dict()
-        record["DesName"] = self.entry_Problem.get()
-        record["Date"] = self.entry_Date.get()
-        record["Medicine"] = self.entry_Medicine.get("1.0", END)
-        record["note"] = self.entry_Note.get("1.0", END)
-        if record["DesName"] == "":
+        Problem = self.entry_Problem.get()
+        Date = self.entry_Date.get()
+        Medicine = self.entry_Medicine.get("1.0", END)
+        Note = self.entry_Note.get("1.0", END)
+        if Problem == "":
             messagebox.showinfo(title='Error', message="Please Enter Diseases name")
-        elif record["Date"] == "":
+        elif Date == "":
             messagebox.showinfo(title='Error', message="Please Enter Date")
         else:
-            jsonfilehandeler(record, self.id, self. name)
+            conn = sqlite3.connect("Medical.db")
+            cursor = conn.cursor()
+
+            cursor.execute(f"""insert into CheckUp values ({self.HostipalID},
+                            {int(self.id)}, {self.DoctorID}, "{Problem}", "{Medicine}",
+                            "{Note}", "{Date}"
+                            )
+                            """)
+
+            conn.commit()
+            conn.close()
+            messagebox.showinfo(title='information', message="Successfull Added")
             self.root.destroy()
 
 
 if __name__ == '__main__':
-    Addrecord("192-65443")
+    Addrecord("1910001", 1930002, 1920001)

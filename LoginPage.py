@@ -2,19 +2,19 @@ from tkinter import *
 from tkinter import Button
 from tkinter import ttk
 from tkinter import messagebox
+from HelperPage.Center import CenterPage
+import sqlite3
 from DoctorPage import Doctor
 from PatientPage import Patient
-from Center import CenterPage
-import sqlite3
 from Pharmacy import pharmacyPage
 
 conn = sqlite3.connect("Medical.db")
 cursor = conn.cursor()
-cursor.execute(""" select * from doctor """)
+cursor.execute(""" select * from Doctor """)
 DoctorList = cursor.fetchall()
-cursor.execute(""" select * from patient """)
-PatientList = cursor.fetchall()
-cursor.execute(""" select * from pharmacy """)
+cursor.execute(""" select * from People """)
+PeopleList = cursor.fetchall()
+cursor.execute(""" select * from Pharmacist """)
 PharmacyList = cursor.fetchall()
 
 conn.commit()
@@ -50,28 +50,29 @@ class LoginPage:
         self.Authentication(id, password)
 
     def Authentication(self, id, password):
-        id_first = id.split("-")
-        if id_first[0] == "191":
+        id_first = str(id)
+        id_first = id_first[:3]
+        if id_first == "193":
             for i in DoctorList:
-                if i[0] == id and i[2] == password:
+                if str(i[0]) == id and i[1] == password:
                     self.root.destroy()
                     Doctor(id)
                     return
             else:
                 messagebox.showinfo(title='Error', message="Id or Password is incorrect")
-        elif id_first[0] == "192":
-            for i in PatientList:
-                if i[0] == id and i[2] == password:
+        elif id_first == "195":
+            for i in PharmacyList:
+                if str(i[0]) == id and i[1] == password:
                     self.root.destroy()
-                    Patient(id)
+                    pharmacyPage(id)
                     return
             else:
                 messagebox.showinfo(title='Error', message="Id or Password is incorrect")
-        elif id_first[0] == "193":
-            for i in PharmacyList:
-                if i[0] == id and i[2] == password:
+        elif id_first == "191":
+            for i in PeopleList:
+                if str(i[0]) == id and i[1] == password:
                     self.root.destroy()
-                    pharmacyPage(id, i[1])
+                    Patient(str(id))
                     return
             else:
                 messagebox.showinfo(title='Error', message="Id or Password is incorrect")
